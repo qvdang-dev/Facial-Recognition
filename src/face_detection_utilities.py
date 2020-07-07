@@ -4,6 +4,7 @@ import imutils
 import dlib
 
 NUM_OF_LANDMARKS = 68
+index = 0
 
 def get_rect_box_coords(pos, value):
     if value:
@@ -22,11 +23,26 @@ def get_face_landmarks_coords(faceLandmarks):
 
 def show_rect_box_coodrs(coodrs, image_org, value):
     # show the output from the detected face coodirators
+
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
-        image_out = cv2.rectangle(image_org, (x , y), (x + w, y + h), (0,255,0), 1)
+        image_out = cv2.rectangle(image_org, (x, y), (x + w, y + h), (0,255,0), 1)
         # image_out = imutils.resize(image_out, width= 320, height=320)
         cv2.imshow('result',image_out)
+
+def save_face_images(coodrs, image_org, value, path, name, index):
+    # show the output from the detected face coodirators
+    b = 50
+    for (i, face) in enumerate(coodrs):
+        x, y, w, h = get_rect_box_coords(face, value)
+        if x > 0:
+            image_out = image_org[y-b:y+h+b, x-b:x+w+b]
+            image_out = imutils.resize(image_out, width=224, height=224)
+            cv2.imwrite(path + "/"+ name + "_" + str(index) + ".png" ,image_out)
+            index +=1
+        # image_out = imutils.resize(image_out, width= 320, height=320)
+    return index
+    
 
 def face_detecting_execute(args):
     if args['cnn'] == False:
