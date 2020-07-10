@@ -8,7 +8,6 @@ from face_detection_utilities import save_face_images
 path = "../dataset/train_image/"
 name = "qvdang"
 path_data = ""
-index = 0
 
 if not os.path.exists(path + name):
     os.makedirs(path + name)

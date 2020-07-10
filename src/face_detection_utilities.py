@@ -4,6 +4,7 @@ import imutils
 import dlib
 
 NUM_OF_LANDMARKS = 68
+FACE_SIZE = (224, 224)
 index = 0
 
 def get_rect_box_coords(pos, value):
@@ -30,14 +31,32 @@ def show_rect_box_coodrs(coodrs, image_org, value):
         # image_out = imutils.resize(image_out, width= 320, height=320)
         cv2.imshow('result',image_out)
 
+def crop_rect_box_coodrs(coodrs, image_org, value):
+    images_crop = []
+    face_box = []
+    for (i, face) in enumerate(coodrs):
+        x, y, w, h = get_rect_box_coords(face, value)
+
+        b = 50
+        if x < b or y < b:
+            b = 0
+
+        image_crop = image_org[y-b:y+h+b, x-b:x+w+b]
+        # image_crop = imutils.resize(image_crop, width=FACE_SIZE[0], height=FACE_SIZE[1])
+        image_crop = cv2.resize(image_crop  , FACE_SIZE, interpolation = cv2.INTER_AREA)
+        images_crop.append(image_crop)
+        face_box.append((x-b, y-b, w+b, h+b))
+
+    return np.array(images_crop), np.array(face_box)
+
 def save_face_images(coodrs, image_org, value, path, name, index):
     # show the output from the detected face coodirators
-    b = 50
+    b = 0
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
         if x > 0:
             image_out = image_org[y-b:y+h+b, x-b:x+w+b]
-            image_out = imutils.resize(image_out, width=224, height=224)
+            image_out = imutils.resize(image_out, width=FACE_SIZE[0], height=FACE_SIZE[1])
             cv2.imwrite(path + "/"+ name + "_" + str(index) + ".png" ,image_out)
             index +=1
         # image_out = imutils.resize(image_out, width= 320, height=320)
