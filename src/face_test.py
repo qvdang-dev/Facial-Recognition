@@ -3,58 +3,56 @@ import os
 import imutils
 import dlib
 import cv2
+import pickle
 
 import tensorflow as tf
+import tensorflow.keras.backend as K
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.applications.imagenet_utils import preprocess_input
-from face_embedding import get_vgg_face_embedding
-import tensorflow.keras.backend as K
 
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+from utilities import get_folder_path, get_file_path, preprocess_image
+from utilities import crop_rect_box_coodrs, get_face_detector_cnn, get_vgg_face_embedding
 
-from face_detection_utilities import crop_rect_box_coodrs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+def get_object_names(path):
+    objects = []
+    with open(path, 'rb') as f:
+        objects = pickle.load(f)
+    return (objects)
 
-path = "../cnn_models/face_detector_00.dat"
-path_img_test = "../dataset/test_image/others/qvu.jpg"
-path_folder = "../dataset/test_image/"
+image_name = "05.jpg"
+image_path = get_file_path('data_test', image_name)
+image_result = get_file_path('result_test', image_name)
+objects_path = get_file_path('other','object_names')
+model_path = get_file_path('result_train','model_name')
+face_detector = get_face_detector_cnn()
+face_embedding = get_vgg_face_embedding(get_file_path('Pre_trained_CNN','vgg_model'))
 
-
-face_detector = dlib.cnn_face_detection_model_v1(path)
-vgg_face = get_vgg_face_embedding()
-
-image_org = cv2.imread(path_img_test)
+image_org = cv2.imread(image_path)
 image_gray = cv2.cvtColor(image_org, cv2.COLOR_RGB2GRAY)
-coodrs = face_detector(image_gray)
-model = tf.keras.models.load_model("../trained_model/model_00.h5")
+coodrs = face_detector(image_gray, 1)
+model = tf.keras.models.load_model(model_path)
 
-object_folders = ["Bui-Tien-Dung", "Quoc-Vu", "Bang-Kieu", "Duy-Manh", "Nguyen-Thien-Nhan"]
-
-
+objects = get_object_names(objects_path)
 images, face_box = crop_rect_box_coodrs(coodrs,image_org,True)
 print(face_box)
 for i in range(images.shape[0]):
     box = face_box[i]
-    face_image = images[i]
-    face_image = img_to_array(face_image)
-    # print(face_image.shape)
-    face_image = np.expand_dims(face_image, axis=0)
-    # print(face_image.shape)
-    face_image = preprocess_input(face_image)
-    # print(face_image.shape)
-    face_encode = vgg_face(face_image)
+    face_encode = preprocess_image(images[i], face_embedding)
     face_embedded = K.eval(face_encode)
     y = model.predict(face_embedded)
     print(np.max(y))
-
+    print(objects)
     if np.max(y) > 0.6:
-        person = object_folders[np.argmax(y)]
+        person = objects[np.argmax(y)]
     else:
         person = "unknow"
-    
-    image_org = cv2.rectangle(image_org,(box[0], box[1]), (box[0] + box[2], box[1] + box[3]), (0,255,0), 2)
-    cv2.putText(image_org, person, (box[0] + box[2], box[1] - 10), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2)
+    cv2.waitKey(0)
+    image_org = cv2.rectangle(image_org,(box[0], box[1]), (box[0] + box[2], box[1] + box[3]), (0,255,0), 1)
+    cv2.putText(image_org, person, (box[0] + box[2], box[1] - 10), cv2.FONT_HERSHEY_COMPLEX, 0.6, (255,0,0), 2)
 
-cv2.imwrite("../test_result/04.png" ,image_org)
+cv2.imwrite(image_result,image_org)

@@ -21,6 +21,7 @@ def get_data_from_path(path):
         X, y = pickle.load(f)
         X = np.array(X, dtype= np.float64)
         y = np.array(y, dtype= np.float64)
+    print(X.shape)
     return X, y
 
 def face_classification_train(data_path, model_path):
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     train_iamge = get_folder_path('data_train')
     train_data = get_file_path('other', 'train_data')
     train_model = get_file_path('result_train','model_name')
-    process_train_data(train_iamge)
+    # process_train_data(train_iamge)
     face_classification_train(train_data, train_model)
     
     pass

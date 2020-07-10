@@ -23,6 +23,9 @@ index = 0
 Folders = {
     "data_train"        : "../dataset/train_image",
     "data_test"         : "../dataset/test_image",
+    "video_frames"      : "../dataset/data_images/video_frame",
+    "video"             : "../dataset/data_images/video",
+    "data_images"       : "../dataset/data_images",
     "Pre_trained_CNN"   : "../cnn_models",
     "result_train"      : "../trained_model",
     "result_test"       : "../test_result",
@@ -41,7 +44,10 @@ def get_folder_path(folder_name):
     return  Folders[folder_name]
 
 def get_file_path(folder_name, file_name):
-    return Folders[folder_name] + "/" + Files[file_name]
+    if file_name in Files:
+        return Folders[folder_name] + "/" + Files[file_name]
+    else:
+        return Folders[folder_name] + "/" + file_name
 
 def get_rect_box_coords(pos, value):
     if value:
@@ -51,6 +57,10 @@ def get_rect_box_coords(pos, value):
     w = pos.right() - x
     h = pos.bottom() - y
     return (x, y, w, h)
+
+def get_face_detector_cnn():
+    face_detector = dlib.cnn_face_detection_model_v1(get_file_path('Pre_trained_CNN','face_detector'))
+    return face_detector
 
 def get_face_landmarks_coords(faceLandmarks):
     coords = np.zeros((NUM_OF_LANDMARKS, 2), dtype = int)
@@ -66,11 +76,11 @@ def get_face_landmarks_coords(faceLandmarks):
 def crop_rect_box_coodrs(coodrs, image_org, value):
     images_crop = []
     face_box = []
+    b = 0   
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
-        b = 50
-        if x < b or y < b:
-            b = 0
+        if x < 0 or y < 0 or w < 0 or h < 0:
+            continue
         image_crop = image_org[y-b:y+h+b, x-b:x+w+b]
         # image_crop = imutils.resize(image_crop, width=FACE_SIZE[0], height=FACE_SIZE[1])
         image_crop = cv2.resize(image_crop  , FACE_SIZE, interpolation = cv2.INTER_AREA)
@@ -79,16 +89,18 @@ def crop_rect_box_coodrs(coodrs, image_org, value):
 
     return np.array(images_crop), np.array(face_box)
 
-def save_face_images(coodrs, image_org, value, path, name, index):
+def save_face_images(coodrs, image_org, value, path, index):
     # show the output from the detected face coodirators
     b = 0
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
-        if x > 0:
-            image_out = image_org[y-b:y+h+b, x-b:x+w+b]
-            image_out = imutils.resize(image_out, width=FACE_SIZE[0], height=FACE_SIZE[1])
-            cv2.imwrite(path + "/"+ name + "_" + str(index) + ".png" ,image_out)
-            index +=1
+        if x < 0 or y < 0 or w < 0 or h < 0:
+            continue
+
+        image_out = image_org[y-b:y+h+b, x-b:x+w+b]
+        image_out = imutils.resize(image_out, width=FACE_SIZE[0], height=FACE_SIZE[1])
+        cv2.imwrite(path + "/" + str(index).zfill(5) + ".jpg" ,image_out)
+        index +=1
         # image_out = imutils.resize(image_out, width= 320, height=320)
     return index
 
@@ -116,6 +128,7 @@ def preprocess_data_from_path(path):
             y.append(i)
     with open(get_file_path('other','train_data'), 'wb') as f:
         pickle.dump([X, y], f)
+
     with open(get_file_path('other','object_names'), 'wb') as f:
         pickle.dump(objects, f)
     
@@ -128,7 +141,7 @@ def face_detecting_execute(args):
         faceDetector = dlib.get_frontal_face_detector()
     else:
         # Initalize to CNN face detector
-        faceDetector = dlib.cnn_face_detection_model_v1(get_file_path('Pre_trained_CNN','face_detector'))
+        faceDetector = get_face_detector_cnn()
 
     # Get the shape predictor
     # shape_predictor = dlib.shape_predictor(args['shape_predictor'])
