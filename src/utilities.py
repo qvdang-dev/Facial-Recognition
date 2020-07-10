@@ -21,16 +21,17 @@ FACE_SIZE = (224, 224)
 index = 0
 
 Folders = {
-    "data_train"        : "../dataset/train_image/",
-    "data_test"         : "../dataset/test_image/",
-    "Pre_trained_CNN"   : "../cnn_models/",
-    "result_train"      : "../trained_model/",
-    "result_test"       : "../test_result/",
-    "other"             : "../other_files/"
+    "data_train"        : "../dataset/train_image",
+    "data_test"         : "../dataset/test_image",
+    "Pre_trained_CNN"   : "../cnn_models",
+    "result_train"      : "../trained_model",
+    "result_test"       : "../test_result",
+    "other"             : "../other_files"
 }
 
 Files = {
-    "vgg_model"         : "vgg_face_weights.h5",
+    "vgg_model"         : "vgg_face_weights.h5",    
+    "face_detector"     : "face_detector_00.dat",
     "train_data"        : "train_data.pickle",
     "object_names"      : "objects.pickle",
     "model_name"        : "face_reg.h5"
@@ -40,7 +41,7 @@ def get_folder_path(folder_name):
     return  Folders[folder_name]
 
 def get_file_path(folder_name, file_name):
-    return Folders[folder_name] + Files[file_name]
+    return Folders[folder_name] + "/" + Files[file_name]
 
 def get_rect_box_coords(pos, value):
     if value:
@@ -54,12 +55,8 @@ def get_rect_box_coords(pos, value):
 def get_face_landmarks_coords(faceLandmarks):
     coords = np.zeros((NUM_OF_LANDMARKS, 2), dtype = int)
     for i in range(NUM_OF_LANDMARKS):
-        coords[i] = (faceLandmarks(i).x, faceLandmarks(i).y)
-    return coords
-
-def show_rect_box_coodrs(coodrs, image_org, value):
-    # show the output from the detected face coodirators
-
+        coords[i] = (faceLandmarks(i).x, faceLandmarks(face_detector))
+    
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
         image_out = cv2.rectangle(image_org, (x, y), (x + w, y + h), (0,255,0), 1)
@@ -95,31 +92,34 @@ def save_face_images(coodrs, image_org, value, path, name, index):
         # image_out = imutils.resize(image_out, width= 320, height=320)
     return index
 
-def preprocess_image(image):
+def preprocess_image(image, embedding):
     image = img_to_array(image)
     image = np.expand_dims(image, axis=0)
     image = preprocess_input(image)
-    image_encode = vgg_face_embedding(image)
+    image_encode = embedding(image)
     return image_encode
 
 def preprocess_data_from_path(path):
-    X = [], y = []
+    X = []; y = []
     objects = dict()
     object_folders = os.listdir(path)
-    vgg_face_embedding = get_vgg_face_embedding()
-    for i,object_index in object_folders:
+    vgg_face_embedding = get_vgg_face_embedding(get_file_path('Pre_trained_CNN','vgg_model'))
+    for i,object_index in enumerate(object_folders):
         objects[i] = object_index
-        images_path= path + object_index + "/"
+        images_path= path + "/" + object_index
         images = os.listdir(images_path)
+        print("---Processing data of Person [{0}] : {1}".format(i, object_index))
         for image_index in images:
-            image = load_img(images_path + image_index, target_size=FACE_SIZE)
-            image_encode = preprocess_image(image)
+            image = load_img(images_path + "/" + image_index, target_size=FACE_SIZE)
+            image_encode = preprocess_image(image, vgg_face_embedding)
             X.append(np.squeeze(K.eval(image_encode)).tolist())
             y.append(i)
     with open(get_file_path('other','train_data'), 'wb') as f:
-        pickle.dump([X, y, objects], f)   
+        pickle.dump([X, y], f)
     with open(get_file_path('other','object_names'), 'wb') as f:
         pickle.dump(objects, f)
+    
+    print("---Finished, data is saved as {0}".format(get_folder_path('other')))    
     return
 
 def face_detecting_execute(args):
@@ -128,7 +128,7 @@ def face_detecting_execute(args):
         faceDetector = dlib.get_frontal_face_detector()
     else:
         # Initalize to CNN face detector
-        faceDetector = dlib.cnn_face_detection_model_v1('../cnn_models/face_detector_00.dat')
+        faceDetector = dlib.cnn_face_detection_model_v1(get_file_path('Pre_trained_CNN','face_detector'))
 
     # Get the shape predictor
     # shape_predictor = dlib.shape_predictor(args['shape_predictor'])
@@ -156,7 +156,7 @@ def face_detecting_execute(args):
     and nothing else so we need to reconstruct the whole architecture 
     of it (VGG-FACE network)
 """
-def get_vgg_face_embedding():
+def get_vgg_face_embedding(path):
 
     model = Sequential()
     model.add(ZeroPadding2D((1,1), input_shape = (224, 224, 3)))
