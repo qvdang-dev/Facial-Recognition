@@ -24,7 +24,7 @@ def get_object_names(path):
         objects = pickle.load(f)
     return (objects)
 
-image_name = "05.jpg"
+image_name = "vn3.jpg"
 image_path = get_file_path('data_test', image_name)
 image_result = get_file_path('result_test', image_name)
 objects_path = get_file_path('other','object_names')
@@ -47,12 +47,12 @@ for i in range(images.shape[0]):
     y = model.predict(face_embedded)
     print(np.max(y))
     print(objects)
-    if np.max(y) > 0.6:
+    if np.max(y) > 0.9:
         person = objects[np.argmax(y)]
     else:
         person = "unknow"
     cv2.waitKey(0)
     image_org = cv2.rectangle(image_org,(box[0], box[1]), (box[0] + box[2], box[1] + box[3]), (0,255,0), 1)
-    cv2.putText(image_org, person, (box[0] + box[2], box[1] - 10), cv2.FONT_HERSHEY_COMPLEX, 0.6, (255,0,0), 2)
+    cv2.putText(image_org, person, (box[0] + box[2], box[1] - 10), cv2.FONT_HERSHEY_COMPLEX, 0.4, (255,0,0), 1)
 
 cv2.imwrite(image_result,image_org)
