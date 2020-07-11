@@ -37,7 +37,7 @@ Files = {
     "face_detector"     : "face_detector_00.dat",
     "train_data"        : "train_data.pickle",
     "object_names"      : "objects.pickle",
-    "model_name"        : "face_reg.h5"
+    "model_name"        : "model_00.h5"
 }
 
 def get_folder_path(folder_name):
@@ -76,7 +76,7 @@ def get_face_landmarks_coords(faceLandmarks):
 def crop_rect_box_coodrs(coodrs, image_org, value):
     images_crop = []
     face_box = []
-    b = 0   
+    b = 0
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
         if x < 0 or y < 0 or w < 0 or h < 0:
@@ -120,7 +120,7 @@ def preprocess_data_from_path(path):
         objects[i] = object_index
         images_path= path + "/" + object_index
         images = os.listdir(images_path)
-        print("---Processing data of Person [{0}] : {1}".format(i, object_index))
+        print("---Processing data of [{0}] : {1}".format(i + 1, object_index))
         for image_index in images:
             image = load_img(images_path + "/" + image_index, target_size=FACE_SIZE)
             image_encode = preprocess_image(image, vgg_face_embedding)
@@ -221,6 +221,6 @@ def get_vgg_face_embedding(path):
     model.load_weights(path)
     # skip the final layer(Activatio = softmax)
     # use Flatten layer for the input of the FC (constucted in training)
-    vgg_face = Model(inputs =model.layers[0].input, outputs = model.layers[-1].output)
+    vgg_face = Model(inputs =model.layers[0].input, outputs = model.layers[-2].output)
     return vgg_face
 
