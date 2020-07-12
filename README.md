@@ -5,7 +5,7 @@
 | **Predicting** |Build a model for Vietnamese football players face recognition. The data is collected from google images. Need to build a model that predicts   people in the large image.|
 | **Data**       | capture images from videos (https://www.youtube.com), images from https://www.google.com/search|
 | **Features**   |<ol> <li>image: continuous</li> <li>label: discrete</li> </ol>|
-| **Models**     |<ol> <li>MMOD is used for human face detection. </li> <li>Use VGG_Face_net as the model to get face emmbedding.<br/>It outputs 2622 embedding for each face image then we take this 2622 embeddings for later classification of image.<br/>Link:https://drive.google.com/uc?id=1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo
+| **Models**     |<ol> <li>MMOD is used for human face detection.<br/>Link: http://dlib.net/files/mmod_human_face_detector.dat.bz2 </li> <li>Use VGG_Face_net as the model to get face emmbedding.<br/>It outputs 2622 embedding for each face image then we take this 2622 embeddings for later classification of image.<br/>Link:https://drive.google.com/uc?id=1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo
 | **Future**     |impove the speed and accuracy in detecting and recognizing the human faces |
 |**References**  |[1] https://arxiv.org/pdf/1502.00046.pdf <br/> [2] https://medium.com/analytics-vidhya/face-recognition-with-vgg-face-in-keras-96e6bc1951d5 <br/> [3] https://www.pyimagesearch.com/2018/01/22/install-dlib-easy-complete-guide/ <br/> [4] https://sefiks.com/2018/08/06/deep-face-recognition-with-keras/ 
 | **Results**    |Score: > 0.96 |
