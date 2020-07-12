@@ -54,6 +54,6 @@ python3 face_train.py --p <bool>
 Testing:
 ```
 python3 face_test.py --image <image_name>
-- Pase the test-image into /dataset/test_image/
+- Paste the test-image into /dataset/test_image/
 - The result image is saved in test_result folder with the same name
 ```
