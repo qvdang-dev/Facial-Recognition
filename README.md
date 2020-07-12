@@ -1,21 +1,59 @@
-Facial-Recognizance
 
-command line:
-$ python3 face_detection.py -p ../shape_predictor/68_face_landmarks.dat -i ../dataset/test_image/test-01.jpg --cnn True
-usage: face_detection.py [-h] -p SHAPE_PREDICTOR -i IMAGE [--cnn CNN]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -p SHAPE_PREDICTOR, --shape-predictor SHAPE_PREDICTOR
-                        path to facial landmarks predictor
-  -i IMAGE, --image IMAGE
-                        path of input image
-  --cnn CNN             pre-trained model for face detector: True : using CNN,
-                        False: using Default (HOG base)
+| **Title**      |Face Recognition |
+| ---------- |-------------------|
+| **Team**       |Dang Quoc Vu - Vu. qvdang.96@gmail.com |
+| **Predicting** |Build a model for Vietnamese football players face recognition. The data is collected from google images. Need to build a model that predicts   people in the large image.|
+| **Data**       | capture images from videos (https://www.youtube.com), images from https://www.google.com/search|
+| **Features**   |<ol> <li>image: continuous</li> <li>label: discrete</li> </ol>|
+| **Models**     |<ol> <li>MMOD is used for human face detection. </li> <li>Use VGG_Face_net as the model to get face emmbedding.<br/>It outputs 2622 embedding for each face image then we take this 2622 embeddings for later classification of image</ol>.
+| **Future**     |impove the speed and accuracy in detecting and recognizing the human faces |
+|**References**  |[1] https://arxiv.org/pdf/1502.00046.pdf <br/> [2] https://medium.com/analytics-vidhya/face-recognition-with-vgg-face-in-keras-96e6bc1951d5 <br/> [3] https://www.pyimagesearch.com/2018/01/22/install-dlib-easy-complete-guide/ <br/> [4] https://sefiks.com/2018/08/06/deep-face-recognition-with-keras/ 
+| **Results**    |Score: > 0.96 |
 
 
-#1: Face detection
-To get the better result we first need to detect only Faces in the image and then use the only faces image for recognition.
-    - Apply the pre-trained model using HOG base (default function) or using CNN (cnn_models/face_detector_00.dat). to implement this work, we use "dlib".
-    - Added number of functions for face detection - check in face_detection_utilities.py file.
-    - Result: check images in test_result folder
+## Directory structure
+```
+|cnn_model/
+|  |-- mmod_face_detector.dat
+|  |-- vgg_face_net_weight.h5
+|dataset/
+|  |--data_images/
+|     |--video/
+|        |--(video)
+|     |--video_frames/
+|        |--(frames of video)
+|  |--test_image/ 
+|     |--(images)
+|  |--train_image/ 
+|     |--Football-player[1]/
+|        |--(images)
+|     |--Football-player[2]/
+|        |--(images)
+|     |--Football-player[3]/
+|        |--(images)
+|     |--Football-player[4]/
+|        |--(images)
+|other_file/
+|  |--(processed data files)
+|src/
+|  |--(files .py)
+|test_result/
+|  |--(images)
+|trained_model/
+|  |--(model file .h5)
+```
+## Command Line
+```
+Training:
+```
+python3 face_train.py --p <bool>
+- True  : Process data before training 
+- False : Use current processed data to train
+```
+```
+Testing:
+```
+python3 face_test.py --image <image_name>
+- Pase the test-image into /dataset/test_image/
+- The result image is saved in test_result folder with the same name
+```
