@@ -56,4 +56,8 @@ Testing:
 python3 face_test.py --image <image_name>
 - Paste the test-image into /dataset/test_image/
 - The result image is saved in test_result folder with the same name
+``` 
 ```
+ Result:
+ The picture below shows the trained model is able to classify 11 football players in Vietnam national team successfully. 
+ ![alt text](http://url/to/img.png)
