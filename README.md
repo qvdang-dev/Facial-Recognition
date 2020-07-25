@@ -51,8 +51,8 @@ python3 face_train.py --p <bool>
 - True  : Process data before training 
 - False : Use current processed data to train
 ```
-```
 Testing:
+```
 ```
 python3 face_test.py --image <image_name>
 - Paste the test-image into /dataset/test_image/
@@ -63,7 +63,6 @@ Result:
 ```
 ```
 ![alt-text-1](https://github.com/qvdang-dev/Facial-Recognition/blob/develop/test_result/acc.png?raw=true "Accuracy chart") ![alt-text-2](https://github.com/qvdang-dev/Facial-Recognition/blob/develop/test_result/loss.png?raw=true "Loss chart")
-```
 ```
 The picture below shows the trained model is able to classify 11 football players in Vietnam national team successfully. 
 ```
