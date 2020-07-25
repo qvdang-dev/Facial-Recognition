@@ -58,6 +58,7 @@ python3 face_test.py --image <image_name>
 - The result image is saved in test_result folder with the same name
 ``` 
 ```
- Result:
+Result:
+```
  The picture below shows the trained model is able to classify 11 football players in Vietnam national team successfully. 
- ![alt text](http://url/to/img.png)
+ ![alt text](https://github.com/qvdang-dev/Facial-Recognition/blob/develop/test_result/U23VN.jpg?raw=true)
