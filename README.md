@@ -44,6 +44,7 @@
 ```
 ## Command Line
 ```
+```
 Training:
 ```
 python3 face_train.py --p <bool>
