@@ -43,8 +43,7 @@
 |  |--(model file .h5)
 ```
 ## Command Line
-```
-```
+
 Training:
 ```
 python3 face_train.py --p <bool>
@@ -58,6 +57,7 @@ python3 face_test.py --image <image_name>
 - The result image is saved in test_result folder with the same name
 ```
 Result:
+
 ![alt-text-1](https://github.com/qvdang-dev/Facial-Recognition/blob/develop/test_result/acc.png?raw=true "Accuracy chart") ![alt-text-2](https://github.com/qvdang-dev/Facial-Recognition/blob/develop/test_result/loss.png?raw=true "Loss chart")
 ```
 The picture below shows the trained model is able to classify 11 football players in Vietnam national team successfully. 
