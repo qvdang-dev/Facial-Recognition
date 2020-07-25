@@ -3,7 +3,7 @@
 | ---------- |-------------------|
 | **Team**       |Dang Quoc Vu - Vu. qvdang.96@gmail.com |
 | **Predicting** |Build a model for Vietnamese football players face recognition. The data is collected from google and captured from videos. Need to build a model that predicts people in the large image.|
-| **Data**       | capture images from videos (https://www.youtube.com), images from https://www.google.com/search|
+| **Data**       | capture images from videos (https://www.youtube.com), images from https://www.google.com/search. <br/>Link: https://drive.google.com/file/d/1xb4n6-ItT-6MrA5BWfVqjTd9-p9rvvuN/view?usp=sharing|
 | **Features**   |<ol> <li>image: continuous</li> <li>label: discrete</li> </ol>|
 | **Models**     |<ol> <li>MMOD is used for human face detection.<br/>Link: http://dlib.net/files/mmod_human_face_detector.dat.bz2 </li> <li>Use VGG_Face_net as the model to get face emmbedding.<br/>It outputs 2622 embedding for each face image then we take this 2622 embeddings for later classification of image.<br/>Link:https://drive.google.com/uc?id=1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo
 | **Future**     |impove the speed and accuracy in detecting and recognizing the human faces |
