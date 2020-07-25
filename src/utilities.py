@@ -37,7 +37,7 @@ Files = {
     "face_detector"     : "face_detector_00.dat",
     "train_data"        : "train_data.pickle",
     "object_names"      : "objects.pickle",
-    "model_name"        : "model_00.h5"
+    "model_name"        : "model_01.h5"
 }
 
 def get_folder_path(folder_name):
@@ -76,16 +76,16 @@ def get_face_landmarks_coords(faceLandmarks):
 def crop_rect_box_coodrs(coodrs, image_org, value):
     images_crop = []
     face_box = []
-    b = 0
+    b = 40
     for (i, face) in enumerate(coodrs):
         x, y, w, h = get_rect_box_coords(face, value)
         if x < 0 or y < 0 or w < 0 or h < 0:
             continue
-        image_crop = image_org[y-b:y+h+b, x-b:x+w+b]
+        image_crop = image_org[y:y+h, x:x+w]
         # image_crop = imutils.resize(image_crop, width=FACE_SIZE[0], height=FACE_SIZE[1])
         image_crop = cv2.resize(image_crop  , FACE_SIZE, interpolation = cv2.INTER_AREA)
         images_crop.append(image_crop)
-        face_box.append((x-b, y-b, w+b, h+b))
+        face_box.append((x, y, w, h))
 
     return np.array(images_crop), np.array(face_box)
 

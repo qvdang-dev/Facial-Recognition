@@ -52,7 +52,7 @@ def face_recognize(image):
         face_encode = preprocess_image(images[i], face_embedding)
         face_embedded = K.eval(face_encode)
         y = model.predict(face_embedded)
-        if np.max(y) > 0.9:
+        if np.max(y) > 0.7:
             person = objects[np.argmax(y)]
         else:
             person = "*"

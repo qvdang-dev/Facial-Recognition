@@ -7,6 +7,7 @@ from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.layers import Dense,Activation,BatchNormalization, Dropout
 from sklearn.model_selection import train_test_split
 
+from matplotlib import pyplot as plt
 from utilities import get_file_path, get_folder_path
 from utilities import preprocess_data_from_path
 
@@ -39,22 +40,41 @@ def face_classification_train(data_path, model_path):
     x_train, x_test, y_train, y_test = train_test_split(X,y, test_size = 0.2)
     class_num = np.max(y) + 1
     print("\n\n---Training Model to regcognize {0} people\n".format(class_num))
-    
+
+
     model = Sequential()
-    model.add(Dense(units=100, input_dim=x_train.shape[1], kernel_initializer='glorot_uniform'))
+    model.add(Dense(units=150, input_dim=x_train.shape[1], kernel_initializer='glorot_uniform'))
     model.add(BatchNormalization())
-    model.add(Activation('tanh'))
+    model.add(Activation('relu'))
     model.add(Dropout(0.3))
     model.add(Dense(units=10,kernel_initializer='glorot_uniform'))
     model.add(BatchNormalization())
-    model.add(Activation('tanh'))
+    model.add(Activation('relu'))
     model.add(Dropout(0.2))
     model.add(Dense(units=class_num, kernel_initializer='he_uniform'))
     model.add(BatchNormalization())
     model.add(Activation('softmax'))
     model.compile(loss = tf.keras.losses.SparseCategoricalCrossentropy(), optimizer='nadam', metrics=['accuracy'])
-    model.fit(x_train, y_train, epochs=300, validation_data=(x_test, y_test))
+    history = model.fit(x_train, y_train, epochs=800, validation_data=(x_test, y_test), shuffle=True)
+    model.test_on_batch(x_test, y_test)
+    model.metrics_names
+    
     tf.keras.models.save_model(model, model_path)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('acc')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc= 'upper left')
+    plt.show()
+
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.show()
 
     print("\n---Training done !")
     return
@@ -66,6 +86,6 @@ if __name__ == "__main__":
     if isProcessData:
         train_iamge = get_folder_path('data_train')
         process_train_data(train_iamge)
-    face_classification_train(train_data, train_model)  
+    face_classification_train(train_data, train_model)
     pass
 
